@@ -34,6 +34,8 @@ def get_distance(content, word_list):
     pass
 
 
+#This function takes the paste URL i.e., B814g7GD and will return the following data
+#time the paste has been create - no_visitors so far - content
 def get_paste_details(URL):
     
     #TO-DO parse the size and the user who created the paste 
@@ -56,6 +58,8 @@ def get_paste_details(URL):
     
     return (time_var, no_visitors, content)
     
+
+#This is a boolean function check if a paste already in the db based on its URL 
 def check_entry_db(con, table, condition):
     cur = con.cursor()
     query = "SELECT * FROM %s where url=:url" %(table)
@@ -75,7 +79,7 @@ def insert_into_db(con, table, data):
         query = 'INSERT INTO %s (datetime, title, url, syntax, content, visitors) VALUES (:datetime, :title, :url, :syntax, :content, :visitors)'%(table)
         cur.execute(query, data)
         con.commit()
-        
+        return 1
     
 
 
