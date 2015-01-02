@@ -26,6 +26,14 @@ WEBSITE = 'http://www.pastebin.com'
 
 signal.signal(signal.SIGINT, signal_handler)
 
+
+#This function should take as input the content of the pastebin and the a word list
+#The function should measure the distance between the content and the word list
+#The function should then return an int value which is the distance
+def get_distance(content, word_list):
+    pass
+
+
 def get_paste_details(URL):
     
     #TO-DO parse the size and the user who created the paste 
@@ -41,8 +49,10 @@ def get_paste_details(URL):
     
     try:no_visitors = int(spans[1].text)
     except:no_visitors = int(spans[2].text)
+    
+    #The first 100 chars of the content will be saved to safe some space for time being!
     content = requests.get("%s/raw.php?i=%s" %(WEBSITE, URL))
-    content = content.text.encode('utf-8')
+    content = content.text.encode('utf-8')[:100]
     
     return (time_var, no_visitors, content)
     
@@ -105,15 +115,9 @@ def main():
     except Exception, e:
         print e
         print "Paste URL: %s" %(url)
-    
-    finally:
-        if con:
-            con.commit()
-            con.close()
-            print "EXITED"
-            #save_db()
-            #The time is relative I will recieve the time from pastebin and add it to the current time  
-
+        con.commit()
+        con.close()
+        print "EXITED"
     
     
 if __name__ == '__main__':
