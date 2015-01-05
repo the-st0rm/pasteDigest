@@ -8,11 +8,12 @@ from datetime import *
 import time
 import signal
 import sys
+import random
 
 
 
 con = sqlite3.connect('db.sqlite3')
-con.text_factory = str
+#con.text_factory = unicode
         
         
 def signal_handler(signal, frame):
@@ -23,6 +24,7 @@ def signal_handler(signal, frame):
         
         
 WEBSITE = 'http://www.pastebin.com'
+url = ''
 
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -38,13 +40,20 @@ def get_distance(content, word_list):
 #time the paste has been create - no_visitors so far - content
 def get_paste_details(URL):
     
+    time.sleep(1)
     #TO-DO parse the size and the user who created the paste 
     r = requests.get("%s/%s"%(WEBSITE, URL))
-    html = r.text.encode('utf-8')
+    html = unicode(r.text)
     soup = BeautifulSoup(html)
     
     details1 = soup.find('div', class_='paste_box_line2')
-    spans = details1.find_all('span')
+    try:
+        spans = details1.find_all('span')
+    except:
+        time_var = datetime(1900,1,1,1,0)
+        no_visitors=0
+        content = "Paste has been removed!"
+        return (time_var, no_visitors, content)
     time_var = spans[0]['title'][:details1.span['title'].rfind(' ')]
     time_var = re.sub(r"([0123]?[0-9])(st|th|nd|rd)",r"\1",time_var)
     time_var = datetime.strptime(time_var, "%A %d of %B %Y %I:%M:%S %p")
@@ -53,8 +62,9 @@ def get_paste_details(URL):
     except:no_visitors = int(spans[2].text)
     
     #The first 100 chars of the content will be saved to safe some space for time being!
+    #time.sleep(1)
     content = requests.get("%s/raw.php?i=%s" %(WEBSITE, URL))
-    content = content.text.encode('utf-8')[:100]
+    content = unicode(content.text)[:100]
     
     return (time_var, no_visitors, content)
     
@@ -85,16 +95,23 @@ def insert_into_db(con, table, data):
 
 
 def main():
+    url = 'NOT_STARTED'
     try:
         while True:
             r =  requests.get("http://pastebin.com/archive")
-            html=r.text.encode('utf-8')
+            html=unicode(r.text)
             soup = BeautifulSoup(html)
             table = soup.find('table')
+            if table is None:
+                print "OPPS, you have been blocked!! .. tyb eh?"
+                break
             rows = table.find_all('tr')[1:]
-            for row in rows:
-                cells = row.find_all('td')
-                title = cells[0].a.text.encode('utf-8')
+            for row in rows[:20]: # We are processing the first 20 rows for now ... to avoid getting blocked from Pastebin
+                try:
+                    cells = row.find_all('td')
+                except:
+                    break
+                title = unicode(cells[0].a.text)
                 url =  cells[0].a['href'][1:]
                 syntax = cells[2].a['href'].split('/')[-1]
                 if not check_entry_db(con,'main_pastebin_log',url):
@@ -111,7 +128,7 @@ def main():
                 else:
                     print "Duplicated: %s" %(url)
                     print "Sending a new request..."
-                    time.sleep(1)
+                    time.sleep(random.randint(1,4))
                     break
     
         con.commit()
