@@ -62,8 +62,8 @@ def get_paste_details(URL):
     except:no_visitors = int(spans[2].text)
     
     #The first 100 chars of the content will be saved to safe some space for time being!
-    #time.sleep(1)
-    content = requests.get("%s/raw.php?i=%s" %(WEBSITE, URL))
+ 
+    content = soup.find(id='paste_code')  
     content = unicode(content.text)[:100]
     
     return (time_var, no_visitors, content)
@@ -96,6 +96,10 @@ def insert_into_db(con, table, data):
 
 def main():
     url = 'NOT_STARTED'
+    get_paste_details('qQYsb7N7')
+    
+    
+    
     try:
         while True:
             r =  requests.get("http://pastebin.com/archive")
@@ -104,7 +108,10 @@ def main():
             table = soup.find('table')
             if table is None:
                 print "OPPS, you have been blocked!! .. tyb eh?"
-                break
+                #if blocked sleep for 30 mins and then try again
+                time.sleep(30*60)
+                continue
+                
             rows = table.find_all('tr')[1:]
             for row in rows[:20]: # We are processing the first 20 rows for now ... to avoid getting blocked from Pastebin
                 try:
