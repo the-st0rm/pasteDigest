@@ -14,7 +14,6 @@
       <tr>
          <td width=70%></td>
          <td width=30%, align="center"></td>
-      </tr>boooooo
    <tbody>
       <tr>
 	  <td  valign="top">
@@ -26,6 +25,7 @@
 				 <th>Date & Time</th>
 				 <th>syntax</th>
 				 <th>visitors</th>
+                                 <th>Weight</th>
 				 <th>Link</th>
 			</tr>
 		</thead>
@@ -38,6 +38,7 @@
 				 <td>{{ p.datetime|date:"Y-m-d H:i" }}</td>
 				 <td>{{ p.syntax }}</td>
 				 <td>{{ p.visitors }}</td>
+                                 <td>{{ p.wieght }}</td>
 				 <td><a href="{{ p.get_url }}" target="_blank">View More..</a></td>
 			</tr>
 			{% endfor %}
@@ -57,19 +58,12 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				 <td>Adeek</td>
-				 <td>Adeek</td>
-				 <td>Adeek</td>
 
+			<tr>
+                           {% for k in keywords %}
+                           <td>{{ k.name }}({{ k.reps }})</td>
+                           {% endfor %}
 			</tr>
-			<tr>
-				 <td>Adeek</td>
-				 <td>Adeek</td>
-				 <td>Adeek</td>
-
-			</tr>			
-			<tr>
 
 		</tbody>
 		</table>
@@ -80,14 +74,47 @@
 
 <div class="text-center">
 	<ul class="pagination">
-  <li><a href="/test/page/1">&laquo;</a></li>
-  <li><a href="/test/page/1">1</a></li>
-  <li><a href="/test/page/2">2</a></li>
-  <li><a href="#">&raquo;</a></li>
+  <li><a id="prev" href="">&laquo;</a></li>
+  <li><a href="/home?page=1">First</a></li>
+  <li><a id="next" href="">&raquo;</a></li>
   </ul>
 </div>
 
 
+   <script>
+         function next() {
+            url = document.URL;
+            //home?p=1
+            res = url.split('=')
+            if (res.length==1) {
+               new_url = url +'?p=2'
+            }
+            else
+            {
+              new_url = res[0]+"="+(parseInt(res[1]) +1);
+            }
+            return new_url;
+         }
+         function prev() {
+            url = document.URL;
+            //home?p=1
+            res = url.split('=')
+            if (res.length==1) {
+               new_url2 = url
+            }
+            else
+            {
+               if (parseInt(res[1]) > 2) {
+                  new_url2 = res[0]+"="+(parseInt(res[1])-1);
+               }
+              
+            }
+            return new_url2;
+         } 
+         document.getElementById('next').href = next();
+         document.getElementById('prev').href = prev();
+         
+   </script>
 
 </body>
 </html>
