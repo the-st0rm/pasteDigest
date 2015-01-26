@@ -13,7 +13,6 @@ import sys
 import settings
 import os
 
-
 sys.path.append(settings.BASE_DIR)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'pasteDigest.settings'
 import django
