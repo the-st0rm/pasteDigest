@@ -157,7 +157,7 @@ def get_paste_details(URL):
     
     #The first 100 chars of the content will be saved to safe some space for time being!
     content = soup.find(id='paste_code')  
-    content = unicode(content.text)[:100]
+    content = unicode(content.text)
     
     return (time_var, no_visitors, content)
     
