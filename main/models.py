@@ -17,6 +17,14 @@ class pastebin_log(models.Model):
     
     def get_url(self):
         return "%s/%s" %(WEBSITE, self.url)
+    def get_keywords(self):
+        res = []
+        for keyword in self.keyword_set.all():
+            res.append(keyword.name)
+        
+        return '-'.join(res)
+        
+        
 
 class keyword(models.Model):
     name = models.CharField(max_length=255)

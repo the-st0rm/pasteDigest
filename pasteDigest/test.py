@@ -24,7 +24,7 @@ KEYWORDS = {
     'hack':5,
     'anonymous':5,
     'egypt':10,
-    'pass':10,
+    'password':20,
     'leak':5,
     'mysql':5,
     'database':5,
@@ -32,6 +32,7 @@ KEYWORDS = {
     'hotmail.com':1,
     'yahoo.com':1,
     'live.com':1,
+    'aol.com':1,
     'mail.ru':1,
     'gov.eg':20,
     
@@ -120,6 +121,7 @@ def get_weight(content, word_list, url=None):
     wieght = 0
     matched_list = []
     global con
+    content = content.lower()   
     for key in word_list.keys():    
         loc = KMP(content, key)
         count = len(list(loc))
@@ -221,12 +223,18 @@ def main():
     
     try:
         while True:
-            r =  requests.get("http://pastebin.com/archive")
+            try:
+                r =  requests.get("http://pastebin.com/archive") #sometime I get this error error(54, 'Connection reset by peer')
+            except Exception, e:
+                print 'Exception: ',
+                print e
+                continue
+            
             html=unicode(r.text)
             soup = BeautifulSoup(html)
             table = soup.find('table')
             if table is None:
-                print "OPPS, you have been blocked!! .. tyb eh?"
+                print "OPPS, you have been blocked..!!"
                 #if blocked sleep 30 mins and then continue
                 time.sleep(60*30)
                 continue
