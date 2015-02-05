@@ -117,6 +117,17 @@ def KMP(text, pattern):
 #This function should take as input the content of the pastebin and the a word list
 #The function should measure the distance between the content and the word list
 #The function should then return an int value which is the distance
+
+def get_by_regex(pattern, content, weight): #do not give it the pattern, pass the compiled object for performace    
+    re_comp =  re.compile(pattern)
+    result = re_comp.finditer(content) # I don't know WHY THE HELL IT IS NOT WORKING with findall or SEARCH .. it only matched one value
+    res= len(list(result)) * weight
+    return res
+    
+
+
+#this function should take content, and array of object functions so it can calculate the weight with differnt values
+#get weight either by KMP or REGEX, KMP takes wordlist, and REGEX takes array of REGEX values
 def get_weight(content, word_list, url=None):
     wieght = 0
     matched_list = []
@@ -129,6 +140,10 @@ def get_weight(content, word_list, url=None):
         if count>0:
             update_keyword_db(con, key, count,url)
             matched_list.append(key)
+    w_regex = get_by_regex('[0-7]\d\d-\d\d-\d\d\d\d(\s+)',content, 10)
+    if w_regex > 0:
+        wieght+=w_regex
+        matched_list.append('ssn')
     return wieght, matched_list
 
 
@@ -248,7 +263,7 @@ def main():
                 url =  cells[0].a['href'][1:]
                 syntax = cells[2].a['href'].split('/')[-1]
                 if not check_entry_db(con,'main_pastebin_log',url):
-                    more_details = get_paste_details(url)
+                    more_details = get_paste_details('pRJmtyNJ')
                     data = dict()
                     data['title'] = title
                     data['syntax'] = syntax
